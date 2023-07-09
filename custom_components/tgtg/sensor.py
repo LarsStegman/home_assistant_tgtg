@@ -18,6 +18,7 @@ CONF_REFRESH_TOKEN = "refresh_token"
 CONF_USER_ID = "user_id"
 CONF_COOKIE = "cookie"
 CONF_USER_AGENT = "user_agent"
+CONF_HTTPS_PROXY = "https_proxy"
 ATTR_ITEM_ID = "item_id"
 ATTR_ITEM_URL = "item_url"
 ATTR_PRICE = "item_price"
@@ -37,6 +38,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_EMAIL): vol.Email(),
         vol.Optional(CONF_ITEM, default=""): cv.ensure_list,
         vol.Optional(CONF_USER_AGENT, default=""): cv.string,
+        vol.Optional(CONF_HTTPS_PROXY, default=""): cv.string,
     }
 )
 
@@ -58,6 +60,12 @@ def setup_platform(
     user_id = config[CONF_USER_ID]
     cookie = config[CONF_COOKIE]
     user_agent = config[CONF_USER_AGENT]
+    https_proxy = config[CONF_HTTPS_PROXY]
+    proxies = None
+    if https_proxy != "":
+        proxies = {
+            'https': https_proxy
+        }
 
     global tgtg_client
 
@@ -68,6 +76,7 @@ def setup_platform(
         user_id=user_id,
         cookie=cookie,
         user_agent=user_agent,
+        proxies=proxies,
     )
 
     # If item: isn't defined, use favorites - otherwise use defined items
